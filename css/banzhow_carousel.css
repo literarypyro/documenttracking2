@@ -1,0 +1,67 @@
+/* Half Page Height Carousel Customization */
+.carousel {
+  height: 530px;
+  background: #34495e;
+}
+
+.carousel-control.left, .carousel-control.right{
+  background: none;
+  -webkit-transition: all 0.4s ease-in-out;
+  -moz-transition: all 0.4s ease-in-out;
+  -o-transition: all 0.4s ease-in-out;
+  filter: none;
+}
+
+.carousel-control.left i{
+  left: 0;
+}
+
+.carousel-control.right i{
+  right: 0;
+}
+
+.carousel-control.left i, .carousel-control.right i{
+  position: absolute;
+  top: 245px;
+  font-size: 25px;
+  background: black;
+  line-height: 40px;
+  padding: 0 15px;
+}
+
+.carousel-indicators li, .carousel-indicators .active {
+  width: 8px;
+  height: 8px;
+  margin: 1px;
+}
+
+.carousel-caption {
+  top: 160px;
+}
+
+.carousel-caption h2{
+  font-family: 'open_sanslight';
+  font-size: 43px;
+  line-height: 50px;
+  margin: 10px 0;
+}
+
+.carousel-caption .button{
+  border: 2px solid white;
+  -webkit-border: 2px solid white;
+  -moz-border: 2px solid white;
+  padding: 10px 40px;
+  border-radius: 2px;
+  color: white;
+  font-family: 'open_sansbold';
+  margin: 30px 0 0 0;
+  display: inline-block;
+  -webkit-transition: all 0.4s ease-in-out;
+  -moz-transition: all 0.4s ease-in-out;
+  -o-transition: all 0.4s ease-in-out;
+}
+
+.carousel-caption .button:hover{
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.13);
+}

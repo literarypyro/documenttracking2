@@ -1,0 +1,26 @@
+.panel-default {
+  border-color: #EBEBEB;
+  border: none;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+}
+
+.panel-group .panel {
+  border-radius: 0px;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+}
+
+.panel-title {
+  font-size: 14px;
+}
+
+.panel-default > .panel-heading {
+  color: #666;
+  background-color: #F8FAFA;
+}
