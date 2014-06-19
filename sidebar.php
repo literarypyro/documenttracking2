@@ -33,7 +33,7 @@
                     <ul class="sub-menu-list">
                         <li><a href="records_monitoring.php"> Monitoring Panel</a></li>
 						<li><a href="records_outing.php"> Outgoing Documents</a></li>
-                        <li><a href="monthly_report.html"> Monthly Report</a></li>
+                        <li><a href="monthly_report.php"> Monthly Report</a></li>
 					</ul>
                 </li>
 				<?php

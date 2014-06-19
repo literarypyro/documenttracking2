@@ -25,7 +25,7 @@ if(isset($_POST['keycode'])){
 		$update_time=date("Y-m-d H:i:s");
 		
 		$update="insert into routing_receipt(target_id,receive_time,division) values ";
-		$update.="('".$_POST['target_id']."','".$update_time."','".$_SESSION['division_code']."')";
+		$update.="('".$_POST['target_id_confirm']."','".$update_time."','".$_SESSION['division_code']."')";
 		$updateRS=$db->query($update);
 		
 //		$_SESSION['reference_number']==$_POST['doc_id'];
@@ -100,7 +100,7 @@ if(isset($_POST['target_id'])){
 				$rt_id=$db->insert_id;
 				$update2="insert into routing_uploads(targets_id,upload_link,upload_date) values ('".$rt_id."','".$file_name."','".date("Y-m-d H:i")."')";
 				$updateRS2=$db->query($update2);
-				
+					
 			}
 			
 			
@@ -112,9 +112,65 @@ if(isset($_POST['target_id'])){
 	$update="update routing_targets set status='ANSWERED' where id='".$_POST['target_id']."'";
 	$updateRS=$db->query($update);
 }	
+if(isset($_POST['target_id_cc'])){
+	$db=new mysqli("localhost","root","","records");
 
-
+	$sql="select * from department order by department_code";
+	$rs2=$db->query($sql);
 			
+	$nm=$rs2->num_rows;
+
+	for($i=0;$i<$nm;$i++){
+		$row2=$rs2->fetch_assoc();
+		if(isset($_POST['fwd_stn_'.$row2['department_code']])){
+			$forwardType="IN";
+			$forwardTo=$row2['department_code'];
+			$forwardRemarks=$_POST['fwdRemarks'];
+			$forwardTime=date("Y-m-d H:i:s");
+			$forwardSender=$_SESSION['division_code'];
+
+			$forwardNumber=calculateReferenceNumber($db,getDocumentDetails($db,$_POST['ref_id_cc']),adjustControlNumber($row['ref_id_cc']));
+			$sql="insert into forward_copy(remarks,to_department,reference_number,forward_date,forwarding_office,document_type) values ";
+			$sql.="(";
+			$sql.="\"".$forwardRemarks."\",";
+			$sql.="\"".$forwardTo."\",";
+			$sql.="\"".$forwardNumber."\",";
+			$sql.="'".$forwardTime."',";
+			$sql.="\"".$forwardSender."\",";
+			$sql.="\"".$forwardType."\"";
+			$sql.=")";	
+			
+			$rs=$db->query($sql);	
+			
+		}
+	}
+	updateDocumentStatus($db,"FORWARDED",$_POST['ref_id_cc']);
+}			
+
+if(isset($_POST['target_id_ccoutgo'])){
+	$db=connectDb();
+	$forwardType="OUT";
+	$forwardTo=$_POST['outgo_destination'];
+	$forwardRemarks=$_POST['outgo_remarks'];
+	$forwardTime=date("Y-m-d H:i:s");
+	$forwardSender=$_SESSION['division_code'];
+	$forwardNumber=$_POST['ref_id_ccoutgo'];
+	$sql="insert into forward_copy(remarks,to_department,reference_number,forward_date,forwarding_office,document_type) values ";
+	$sql.="(";
+	$sql.="\"".$forwardRemarks."\",";
+	$sql.="\"".$forwardTo."\",";
+	$sql.="\"".$forwardNumber."\",";
+	$sql.="'".$forwardTime."',";
+	$sql.="\"".$forwardSender."\",";
+	$sql.="\"".$forwardType."\"";
+	$sql.=")";	
+			
+	$rs=$db->query($sql);	
+			
+	updateDocumentStatus($db,"FORWARDED",$_POST['ref_id_ccoutgo']);
+}			
+
+
 ?>
 
 <!DOCTYPE html>
@@ -337,8 +393,8 @@ if(isset($_POST['target_id'])){
 					</button>
 						<ul class="dropdown-menu pull-right">
 						<li><a onclick='prepareReply("<?php echo $row['reference_no'];?>","<?php echo $row['id']; ?>")' href="#">Reply</a></li>
-						<li><a data-toggle="modal" href="#ccModal">Send A Copy</a></li>
-                        <li><a href="#">Send as Outgoing</a></li>
+						<li><a onclick='prepareCC("<?php echo $row['reference_no'];?>","<?php echo $row['id']; ?>")'  href='#'>Send A Copy</a></li>
+                        <li><a  onclick='prepareCCOut("<?php echo $row['reference_no'];?>","<?php echo $row['id']; ?>")' href='#'>Send as Outgoing</a></li>
                         <li><a href="#">Close Document</a></li>
                         </ul>
                 </div>			
@@ -759,7 +815,7 @@ if(isset($_POST['target_id'])){
         </table>
         </div>
         </div>
-		<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -878,6 +934,12 @@ if(isset($_POST['target_id'])){
                     <form action="main_documents.php" method="post" class="form-horizontal ">
 
 					<div class="modal-body">
+						<div style='display:none;' class='form-group'>
+						<input type='text' name='target_id_cc' id='target_id_cc' />
+						<input type='text' name='ref_id_cc' id='ref_id_cc' />	
+						
+						</div>
+
 						<div class="form-group">
                             <label class="control-label col-md-4 col-sm-2 control-label">Destinations</label>
                             <div class="col-md-6 col-sm-6">
@@ -908,7 +970,7 @@ if(isset($_POST['target_id'])){
                         <div class="form-group">
                         <label class="control-label col-md-4 col-sm-2" >Remarks</label>
                         <div class="col-md-6">
-                            <textarea class='form-control'></textarea>
+                            <textarea class='form-control' name='fwdRemarks'></textarea>
                         </div>
                         </div>
 						
@@ -926,6 +988,48 @@ if(isset($_POST['target_id'])){
             </div>
 		</div>
 			
+		<div class="modal fade" id="cc_outModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Send An Outgoing Copy</h4>
+                </div>
+                    <form action="main_documents.php" method="post" class="form-horizontal ">
+
+					<div class="modal-body">
+						<div style='display:none;' class='form-group'>
+						<input type='text' name='target_id_ccoutgo' id='target_id_ccoutgo' />
+						<input type='text' name='ref_id_ccoutgo' id='ref_id_ccoutgo' />	
+						
+						</div>
+
+
+						<div class="form-group">
+                            <label class="control-label col-md-4 col-sm-4 control-label">Enter Destination</label>
+                            <div class="col-md-6 col-sm-6">	
+								<input type='text' name='out_destination' id='out_destination' class='form-control' />
+							</div>
+						</div>
+                        <div class="form-group">
+                        <label class="control-label col-md-4 col-sm-2" >Remarks</label>
+                        <div class="col-md-6">
+                            <textarea class='form-control' name="outgo_remarks" id='outgo_remarks'></textarea>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+					   <button class="btn btn-primary" type="submit">Submit</button>
+						<!--
+						<button data-dismiss="modal" class="btn btn-primary" type="button">Close</button>
+						-->
+					 </div>
+					</form>	
+					
+                </div>
+            </div>
+		</div>
+
 		<div class="modal fade" id="replyModal"  tabindex="-1" data-focus-on="input:first" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog " style='width:800px;'>
                 <div class="modal-content">
@@ -1446,7 +1550,7 @@ function updateDestList(division,division_name){
 }
 function getBarCode(barkey,dockey){
 
-	$('#code_values').html("<input type=hidden id='target_id' name='target_id' value='"+barkey+"'/><input type=hidden id='doc_id' name='doc_id'  value='"+dockey+"' />");
+	$('#code_values').html("<input type=hidden id='target_id_confirm' name='target_id_confirm' value='"+barkey+"'/><input type=hidden id='doc_id' name='doc_id'  value='"+dockey+"' />");
 						//<input type=hidden id='target_id' name='target_id' />
 						//<input type=hidden id='doc_id' name='doc_id'  />					   
 																						
@@ -1520,6 +1624,29 @@ function prepareReply(ref_id,target_id){
 	$('#replyModal').modal('show');
 
 }
+
+function prepareCC(ref_id,target_id){
+	$('#target_id_cc').val(target_id);
+	$('#ref_id_cc').val(ref_id);
+	$('#ccModal').modal('show');
+
+}
+
+function prepareCCOut(ref_id,target_id){
+	$('#target_id_ccoutgo').val(target_id);
+	$('#ref_id_ccoutgo').val(ref_id);
+	$('#cc_outModal').modal('show');
+
+}
+
+
+
+
+
+
+
+
+
 
 function checkAlter(element,dept){
 	if($(element).val()=="OTHER"){
