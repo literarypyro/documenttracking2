@@ -138,6 +138,22 @@ function updateRoutingStatus($setDb,$department,$status,$routing){
 	routing_targets set 
 	status='".$new_status."' where status='".$old_status."' and 
 	destination_office in ('".$department."') and routing_id='".$routing."'";
+	
+	$rs=$setDb->query($sql);
+	
+	$routingTargetId=$setDb->insert_id;
+	return $routingTargetId;
+	
+}
+function updateRoutingStatus3($setDb,$department,$status,$routing){
+	$new_status=$status[0];
+	$old_status=$status[1];
+
+	$sql="update
+	routing_targets set 
+	status='".$new_status."' where status='".$old_status."' and 
+	destination_office in ('".$department."') and id='".$routing."'";
+	
 	$rs=$setDb->query($sql);
 	
 	$routingTargetId=$setDb->insert_id;
@@ -196,6 +212,14 @@ function getRoutingActions($db,$ref_no){
 	$rs=$db->query($sql);
 	return $rs;
 }
+function getRoutingActions2($db,$ref_no){
+
+	$sql="select * from document_routing where reference_no*1='".$ref_no."' order by request_date desc";
+	
+	$rs=$db->query($sql);
+	return $rs;
+}
+
 
 /** In a particular Routing Action, this function lists all the destinations
 */

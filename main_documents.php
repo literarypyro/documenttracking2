@@ -170,6 +170,25 @@ if(isset($_POST['target_id_ccoutgo'])){
 	updateDocumentStatus($db,"FORWARDED",$_POST['ref_id_ccoutgo']);
 }			
 
+if(isset($_POST['ref_id_close'])){
+	$ref_no=$_POST['ref_id_close'];
+	updateDocumentStatus($db,"CLOSED: ".$_SESSION['division_code'],$ref_no);
+	
+	$target_id=$_POST['target_id_close'];
+	
+	$status[0]="CLOSED";
+	$status[1]="PENDING";
+	
+	updateRoutingStatus3($db,$_SESSION['division_code'],$status,$target_id);
+					
+	$status[0]="CLOSED";
+	$status[1]="ISSUED AND SENT";
+	updateRoutingStatus3($db,$_SESSION['division_code']."','ALL OFFICERS",$status,$target_id);
+
+
+}
+
+
 
 ?>
 
@@ -359,7 +378,6 @@ if(isset($_POST['target_id_ccoutgo'])){
 			<td><?php echo date("Y-m-d",strtotime($documentRow['document_date'])); ?></td>
 			<td>
 
-
 			<a href='#' >
 
 			<?php echo $documentRow['subject']; ?> 
@@ -395,7 +413,7 @@ if(isset($_POST['target_id_ccoutgo'])){
 						<li><a onclick='prepareReply("<?php echo $row['reference_no'];?>","<?php echo $row['id']; ?>")' href="#">Reply</a></li>
 						<li><a onclick='prepareCC("<?php echo $row['reference_no'];?>","<?php echo $row['id']; ?>")'  href='#'>Send A Copy</a></li>
                         <li><a  onclick='prepareCCOut("<?php echo $row['reference_no'];?>","<?php echo $row['id']; ?>")' href='#'>Send as Outgoing</a></li>
-                        <li><a href="#">Close Document</a></li>
+                        <li><a onclick='prepareClose("<?php echo $row['reference_no'];?>","<?php echo $row['id']; ?>")' href="#">Close Document</a></li>
                         </ul>
                 </div>			
 			
@@ -431,7 +449,7 @@ if(isset($_POST['target_id_ccoutgo'])){
         </table>
         </div>
         </div>
-		<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -1424,6 +1442,36 @@ if(isset($_POST['target_id_ccoutgo'])){
 				</div>	
 			</div>			
 		
+		<div class="modal fade" id="closeDocModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Close Document</h4>
+                </div>
+                <form action="main_documents.php" method='post' class="form-horizontal ">
+                <div class="modal-body">
+					<div class='form-group' style='display:none'>
+						<input type=text name='ref_id_close' id='ref_id_close' />
+						<input type=text name='target_id_close' id='target_id_close' />
+
+					</div>
+				
+                    <div class="form-group">
+						<label class="control-label col-md-10">This will close the document from any further actions</label>
+                    </div>
+				</div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit">OK</button>
+
+					<button data-dismiss="modal" class="btn btn-primary" type="button">Cancel</button>
+                </div>
+				</form>
+				
+				
+				</div>
+			</div>
+        </div>
 		
 	
 		
@@ -1639,20 +1687,19 @@ function prepareCCOut(ref_id,target_id){
 
 }
 
-
-
-
-
-
-
-
-
-
 function checkAlter(element,dept){
 	if($(element).val()=="OTHER"){
 		$('#alter_to_stn_'+dept).val($(element).data('name'));
 	
 	}
+}
+
+function prepareClose(ref_id){
+	$('#ref_id_close').val(ref_id);
+	$('#target_id_close').val(target_id);
+
+	$('#closeDocModal').modal('show');
+
 }
 
 </script>

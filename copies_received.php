@@ -157,7 +157,7 @@ require("functions/user functions.php");
 			<td><?php echo $documentRow['document_date']; ?></td>
 			<td><a href='document_history.php?view=<?php echo getDocumentId($db,$row3['reference_number']); ?>'><?php echo $documentRow['subject']; ?></a></td>
 			<td><?php echo $row3['reference_number']; ?></td>
-			<td><a href='forward report.php?forId=<?php echo $row3['id']; ?>'>[Link]</a></td>
+			<td><a href='forward report.php?forId=<?php echo $row3['id']; ?>'><i class='fa fa-external-link'></i></a></td>
 			</tr>
 			<?php
 			}

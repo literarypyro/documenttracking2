@@ -1,6 +1,7 @@
 <?php
 function updateDocumentStatus($setDb,$status,$ref_id){
 	$update2="update document set status='".$status."' where (ref_id*1)='".($ref_id*1)."'";
+	
 	$update=$setDb->query($update2);	
 }
 
