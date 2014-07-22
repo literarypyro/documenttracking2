@@ -88,6 +88,15 @@ if(isset($_POST['target_id'])){
 			
 			$file_name=(basename($_FILES['file_stn_'.$row['department_code']]['name']));
 
+			$documentLink="uploads/".$file_name;
+
+			$uploadLink=uploadDocument($_FILES['file_stn_'.$row['department_code']]['tmp_name'],$documentLink);			
+
+			$uploadDetails[0]=$_POST['ref_id'];
+			$uploadDetails[1]=$documentLink;
+				
+			addUpload($db,$uploadDetails);
+			
 			$update="insert into routing_targets(destination_office,to_name,action_id,status,remarks,routing_id,keycode,alter_to) ";	
 			$update.=" VALUES ";
 			$update.="('".$row['department_code']."','".$officer_name."','".$action_stn."','PENDING',\"".$remarks."\",'".$routing_id."','".$keycode."','".$alter_officer."')";
@@ -548,10 +557,6 @@ if(isset($_POST['ref_id_close'])){
                                     </div>
                                 </div>
                             </div>
-		
-
-
-
         </section>
 
         <section class="panel">
@@ -621,8 +626,7 @@ if(isset($_POST['ref_id_close'])){
 								<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Action <i class="fa fa-angle-down"></i>
 								</button>
 									<ul class="dropdown-menu pull-right">
-									<li><a data-toggle="modal" href="#ccModal">Send A Copy</a></li>
-									<li><a href="#">Close Document</a></li>
+									<li><a onclick='prepareCC("<?php echo $row['ref_id'];?>","<?php echo $row3['action_id']; ?>")'  href='#'>Send A Copy</a></li>
 									</ul>
 							</div>								
 						</td>
@@ -1216,8 +1220,8 @@ if(isset($_POST['ref_id_close'])){
 									-->
 									
 									<span id='check_stn_<?php echo $row['department_code']; ?>' name='check_stn_<?php echo $row['department_code']; ?>' class='division_bar col-sm-10'>
-											<input id='stn_<?php echo $row['department_code']; ?>' name='stn_<?php echo $row['department_code']; ?>' class='division_unit' type='checkbox'  onclick='updateDestList("stn_<?php echo $row['department_code']; ?>","<?php echo $row['department_name']; ?>")' type="checkbox">
-											<label><?php echo $row['department_name']; ?></label>
+										<input id='stn_<?php echo $row['department_code']; ?>' name='stn_<?php echo $row['department_code']; ?>' class='division_unit' type='checkbox'  onclick='updateDestList("stn_<?php echo $row['department_code']; ?>","<?php echo $row['department_name']; ?>")' type="checkbox">
+										<label><?php echo $row['department_name']; ?></label>
 									<!--
 										</div>
 									</div>

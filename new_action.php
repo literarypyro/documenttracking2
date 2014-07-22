@@ -10,14 +10,31 @@ require("functions/user functions.php");
 require("functions/form functions.php");
 
 ?>
+<?php
+if(isset($_POST['doc_subject'])){
+	$subject=$_POST['doc_subject'];
+	
+	$doc_type=$_POST['document_type'];
+	$class=$_POST['class_list'];
+	
+	$originating_office=$_POST['originating_office'];
+	$originating_officer=$_POST['originating_officer'];
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-
-
-
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
@@ -49,9 +66,9 @@ require("functions/form functions.php");
 
   <link href="css/banzhow_nav.css" rel="stylesheet">
   <link href="css/style-responsive.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css/bootstrap-fileupload.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-fileupload.min.css" />
 
- <link rel="stylesheet" type="text/css" href="css/bootstrap-modal.css" />
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-modal.css" />
 
   
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -178,13 +195,13 @@ require("functions/form functions.php");
                                             <div class="form-group">
                                                 <label class="col-md-2 col-sm-2 control-label">Document Date</label>
                                                 <div class="col-md-6 col-sm-6">
-													<input size="16" type="text" value="<?php echo date("Y-m-d H:i"); ?>" readonly class="form_datetime form-control">
+													<input size="16" type="text" name='document_date' id='document_date' value="<?php echo date("Y-m-d H:i"); ?>" readonly class="form_datetime form-control">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label class="col-md-2 col-sm-2 control-label">Receive Date</label>
                                                 <div class="col-md-6 col-sm-6">
-													<input size="16" type="text" value="<?php echo date("Y-m-d H:i"); ?>" readonly class="form_datetime form-control">
+													<input size="16" type="text" name='receive_date' id='receive_date' value="<?php echo date("Y-m-d H:i"); ?>" readonly class="form_datetime form-control">
 
                                                 </div>
                                             </div>
@@ -616,15 +633,27 @@ function updateDestinationCount(){
 }
 
 function verifyPassCode(passElement){
-	if(passElement==$('#passcode_verify').data('passcode')){
-		$('#fin_button').prop('disabled','false');
+
+	if($(passElement).val()==$('#passcode_verify').data('passcode')){
+		$('#fin_button').prop('disabled',false);
 	}
 	else {
-		$('#fin_button').prop('disabled','true');
+		$('#fin_button').prop('disabled',true);
 	}
 
 
 }
+function checkAlternate(element,key,other_element){
+	if($(element).val()==key){
+		$('#'+other_element).prop('disabled',false);
+	}
+	else {
+		$('#'+other_element).prop('disabled',true);
+	
+	}
+
+}
+
 </script>
 </body>
 </html>

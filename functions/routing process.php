@@ -63,7 +63,7 @@ function addRoutingStatus($setDb,$routing){
 							
 							file_put_contents($filename,$msg);
 
-	//				echo "$file\n";
+			//				echo "$file\n";
 					}
 				}		
 				closedir($handle);
